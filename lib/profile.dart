@@ -187,7 +187,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           if (_role == 'admin') const Divider(color: Colors.black),
           ListTile(
-            leading: Icon(Icons.logout, color: Colors.redAccent),
+            leading: Icon(
+              Icons.logout,
+              color: const Color.fromARGB(255, 240, 16, 16),
+            ),
             title: const Text(
               'Izrakstīties',
               style: TextStyle(
