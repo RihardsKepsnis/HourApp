@@ -226,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: const Text(
                             'Izrakstīties',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 240, 16, 16),
+                              color: Color.fromARGB(255, 255, 248, 248),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
