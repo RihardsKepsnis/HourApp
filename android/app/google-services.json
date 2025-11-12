@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "179684449635",
+    "project_id": "stundu-skaititajs2",
+    "storage_bucket": "stundu-skaititajs2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179684449635:android:97ab634ead90ebc8230756",
+        "android_client_info": {
+          "package_name": "com.example.awdwad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhsUIo4gQDxH9PenOlKzCaIoEqg_rWiZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
