@@ -188,7 +188,7 @@ class _CalendarPageState extends State<CalendarPage> {
           child: Text(
             '${day.day}',
             style: TextStyle(
-              color: isWeekendOrHoliday ? Colors.red : primaryColor,
+              color: isWeekendOrHoliday ? Colors.red : Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -213,7 +213,7 @@ class _CalendarPageState extends State<CalendarPage> {
           Text(
             '${hours.toStringAsFixed(1)}h',
             style: TextStyle(
-              color: isWeekendOrHoliday ? Colors.red : Colors.orange,
+              color: isWeekendOrHoliday ? Colors.red : primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -260,7 +260,7 @@ class _CalendarPageState extends State<CalendarPage> {
           Text(
             '${hours.toStringAsFixed(1)}h',
             style: TextStyle(
-              color: isWeekendOrHoliday ? Colors.red : Colors.orange,
+              color: isWeekendOrHoliday ? Colors.red : primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -277,7 +277,7 @@ class _CalendarPageState extends State<CalendarPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              icon: Icon(Icons.chevron_left, color: primaryColor, size: 30),
+              icon: Icon(Icons.chevron_left, color: Colors.black, size: 30),
               onPressed: () {
                 setState(() {
                   if (_selectedMonth == 1) {
@@ -295,13 +295,13 @@ class _CalendarPageState extends State<CalendarPage> {
             Text(
               DateFormat("MMMM yyyy", "lv_LV").format(_focusedDay),
               style: TextStyle(
-                color: primaryColor,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
             IconButton(
-              icon: Icon(Icons.chevron_right, color: primaryColor, size: 30),
+              icon: Icon(Icons.chevron_right, color: Colors.black, size: 30),
               onPressed: () {
                 setState(() {
                   if (_selectedMonth == 12) {
@@ -330,7 +330,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   child: Text(
                     DateFormat.MMMM('lv_LV').format(DateTime(0, month)),
                     style: TextStyle(
-                      color: primaryColor,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -347,7 +347,7 @@ class _CalendarPageState extends State<CalendarPage> {
               },
               dropdownColor: Colors.white,
               style: TextStyle(
-                color: primaryColor,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -363,7 +363,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   child: Text(
                     year.toString(),
                     style: TextStyle(
-                      color: primaryColor,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -381,7 +381,7 @@ class _CalendarPageState extends State<CalendarPage> {
               },
               dropdownColor: Colors.white,
               style: TextStyle(
-                color: primaryColor,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -476,11 +476,11 @@ class _CalendarPageState extends State<CalendarPage> {
                             calendarStyle: CalendarStyle(
                               todayDecoration: const BoxDecoration(),
                               selectedDecoration: BoxDecoration(
-                                color: primaryColor.withOpacity(0.7),
+                                color: Colors.black.withOpacity(0.7),
                                 shape: BoxShape.circle,
                               ),
                               defaultTextStyle: TextStyle(
-                                color: primaryColor,
+                                color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                               weekendTextStyle: const TextStyle(
@@ -488,13 +488,13 @@ class _CalendarPageState extends State<CalendarPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                               outsideTextStyle: TextStyle(
-                                color: primaryColor.withOpacity(0.5),
+                                color: Colors.black.withOpacity(0.5),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             daysOfWeekStyle: DaysOfWeekStyle(
                               weekdayStyle: TextStyle(
-                                color: primaryColor,
+                                color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                               weekendStyle: const TextStyle(

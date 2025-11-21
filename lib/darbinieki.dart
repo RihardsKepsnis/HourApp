@@ -313,7 +313,10 @@ class _DarbiniekiPageState extends State<DarbiniekiPage> {
       await FirebaseAuth.instance.signOut();
       return true;
     } catch (e) {
-      _showMessage('Error creating user: $e', backgroundColor: Colors.red);
+      _showMessage(
+        'Neizdevās izveidot jaunu lietotāju!: $e',
+        backgroundColor: Colors.red,
+      );
       return false;
     }
   }
@@ -455,7 +458,7 @@ class _DarbiniekiPageState extends State<DarbiniekiPage> {
     }
     if (!isAdmin) {
       return const Scaffold(
-        body: Center(child: Text('Access Denied. Admins only.')),
+        body: Center(child: Text('Piekļuve tikai administratoriem')),
       );
     }
     return Scaffold(
@@ -584,7 +587,7 @@ class _DarbiniekiPageState extends State<DarbiniekiPage> {
                             Checkbox(
                               side: MaterialStateBorderSide.resolveWith(
                                 (states) =>
-                                    BorderSide(width: 1.5, color: primaryColor),
+                                    BorderSide(width: 1.5, color: Colors.black),
                               ),
                               activeColor: primaryColor,
                               checkColor: Colors.white,
@@ -606,7 +609,7 @@ class _DarbiniekiPageState extends State<DarbiniekiPage> {
                                   Text(
                                     name,
                                     style: TextStyle(
-                                      color: primaryColor,
+                                      color: Colors.black,
                                       fontSize: screenWidth * 0.045,
                                       fontWeight: FontWeight.bold,
                                     ),

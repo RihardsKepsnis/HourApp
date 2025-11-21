@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(
             _name,
             style: TextStyle(
-              color: const Color(0xFF24562B),
+              color: const Color.fromARGB(255, 0, 0, 0),
               fontSize: screenWidth * 0.07,
               fontWeight: FontWeight.bold,
             ),

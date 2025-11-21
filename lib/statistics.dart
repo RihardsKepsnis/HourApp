@@ -176,7 +176,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   ),
                   child: Text(
                     '$count',
-                    style: const TextStyle(color: Colors.white, fontSize: 8),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 8,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -261,10 +264,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 children: [
                   Container(width: 16, height: 16, color: color),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(e.key)),
+                  Expanded(
+                    child: Text(
+                      e.key,
+                      style: TextStyle(
+                        color: Colors.black, // <-- LEFT TEXT COLOR
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
                   Text(
                     '${e.value.toStringAsFixed(1)}h (${percent.toStringAsFixed(1)}%)',
                     textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      color: Colors.black, // <-- change this
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -293,7 +309,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         style: TextStyle(
                           fontSize: sw * 0.055,
                           fontWeight: FontWeight.bold,
-                          color: primaryColor,
+                          color: Colors.black,
                         ),
                       ),
                       SizedBox(height: sw * 0.05),
@@ -379,7 +395,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             child: _SummaryCard(
                               title: 'Kopējās stundas',
                               value: _totalHours.toStringAsFixed(1),
-                              color: primaryColor,
+                              color: Colors.black,
                               widthFactor: sw,
                             ),
                           ),
@@ -388,7 +404,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                             child: _SummaryCard(
                               title: 'Vidēji stundas/dienā',
                               value: _averageHours.toStringAsFixed(1),
-                              color: primaryColor,
+                              color: Colors.black,
                               widthFactor: sw,
                             ),
                           ),
@@ -402,7 +418,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           style: TextStyle(
                             fontSize: sw * 0.05,
                             fontWeight: FontWeight.bold,
-                            color: primaryColor,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(height: sw * 0.02),
@@ -446,7 +462,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           style: TextStyle(
                             fontSize: sw * 0.05,
                             fontWeight: FontWeight.bold,
-                            color: primaryColor,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(height: sw * 0.02),
@@ -499,7 +515,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 'Top 5 uzdevumi',
                                 style: TextStyle(
                                   fontSize: sw * 0.045,
-                                  color: primaryColor,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -519,6 +535,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                           style: TextStyle(
                                             fontSize: sw * 0.045,
                                             color: Colors.black87,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,

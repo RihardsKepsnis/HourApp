@@ -219,7 +219,7 @@ class _ArchivedWorkersPageState extends State<ArchivedWorkersPage> {
                             Text(
                               name,
                               style: TextStyle(
-                                color: primaryColor,
+                                color: Colors.black,
                                 fontSize: screenWidth * 0.045,
                                 fontWeight: FontWeight.bold,
                               ),

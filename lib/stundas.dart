@@ -335,7 +335,7 @@ class _StundasPageState extends State<StundasPage> {
           'Saglabātie uzdevumi: ${tasks.length}',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 0, 0, 0),
+            color: Color.fromARGB(255, 255, 255, 255),
           ),
         ),
         backgroundColor: primaryColor,
@@ -980,7 +980,13 @@ class _StundasPageState extends State<StundasPage> {
           children: const [
             Icon(Icons.more_vert, color: Color.fromARGB(255, 0, 0, 0)),
             SizedBox(width: 4),
-            Text("Cits", style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+            Text(
+              "Cits",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+            ),
           ],
         ),
       ),
@@ -1094,10 +1100,11 @@ class _StundasPageState extends State<StundasPage> {
                               'Kopēt',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 0, 0, 0),
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
+                              backgroundColor: Colors.white,
                             ),
                           ),
                           ElevatedButton.icon(
@@ -1110,10 +1117,11 @@ class _StundasPageState extends State<StundasPage> {
                               'Ielīmēt',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 0, 0, 0),
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
+                              backgroundColor: Colors.white,
                             ),
                           ),
                           _buildOtherButton(),
@@ -1133,10 +1141,11 @@ class _StundasPageState extends State<StundasPage> {
                                 "Pievienot uzdevumu",
                                 style: TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                                backgroundColor: Colors.white,
                               ),
                             ),
                           ),
@@ -1153,10 +1162,11 @@ class _StundasPageState extends State<StundasPage> {
                                 "Paslēptie uzdevumi",
                                 style: TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                                backgroundColor: Colors.white,
                               ),
                             ),
                           ),
@@ -1178,12 +1188,13 @@ class _StundasPageState extends State<StundasPage> {
                             child: ElevatedButton(
                               onPressed: _isEditing ? _saveCurrentEntry : null,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                                backgroundColor: Colors.white,
                               ),
                               child: const Text(
                                 "Saglabāt ierakstu",
                                 style: TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -1193,12 +1204,13 @@ class _StundasPageState extends State<StundasPage> {
                             child: ElevatedButton(
                               onPressed: _isEditing ? _submitEntries : null,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryColor,
+                                backgroundColor: Colors.white,
                               ),
                               child: const Text(
                                 "Iesniegt ierakstus",
                                 style: TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0),
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),

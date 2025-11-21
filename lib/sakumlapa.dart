@@ -388,7 +388,7 @@ class _HomePageContentState extends State<HomePageContent> {
       if (finalMax < 8) {
         finalMax = 8;
       }
-      if (finalMax > 24) finalMax = 24;
+      if (finalMax > 23) finalMax = 23;
       List<BarChartGroupData> groups = [];
       Color getBarColor(double hours) {
         if (hours >= 8)
@@ -662,7 +662,7 @@ class _HomePageContentState extends State<HomePageContent> {
                         style: TextStyle(
                           fontSize: screenWidth * 0.06,
                           fontWeight: FontWeight.bold,
-                          color: primaryColor,
+                          color: Colors.black,
                         ),
                       ),
                       SizedBox(height: screenWidth * 0.01),
@@ -693,7 +693,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     style: TextStyle(
                       fontSize: screenWidth * 0.06,
                       fontWeight: FontWeight.bold,
-                      color: primaryColor,
+                      color: Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -702,7 +702,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_left, color: primaryColor),
+                        icon: Icon(Icons.arrow_left, color: Colors.black),
                         onPressed:
                             _selectedWeekStart
                                         .subtract(const Duration(days: 7))
@@ -716,11 +716,11 @@ class _HomePageContentState extends State<HomePageContent> {
                         style: TextStyle(
                           fontSize: screenWidth * 0.055,
                           fontWeight: FontWeight.bold,
-                          color: primaryColor,
+                          color: Colors.black,
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.arrow_right, color: primaryColor),
+                        icon: Icon(Icons.arrow_right, color: Colors.black),
                         onPressed:
                             _selectedWeekStart
                                         .add(const Duration(days: 7))
@@ -739,7 +739,7 @@ class _HomePageContentState extends State<HomePageContent> {
                         child: BarChart(
                           BarChartData(
                             minY: 1,
-                            maxY: _chartMaxY,
+                            maxY: _chartMaxY + 1,
                             barTouchData: BarTouchData(
                               enabled: true,
                               touchTooltipData: BarTouchTooltipData(
@@ -765,11 +765,11 @@ class _HomePageContentState extends State<HomePageContent> {
                             titlesData: FlTitlesData(
                               leftTitles: SideTitles(
                                 showTitles: true,
-                                interval: _chartMaxY / 5,
+                                interval: _chartMaxY / 6,
                                 getTextStyles:
                                     (context, value) => TextStyle(
                                       fontSize: screenWidth * 0.045,
-                                      color: primaryColor,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
                                 reservedSize: 40,
@@ -783,7 +783,7 @@ class _HomePageContentState extends State<HomePageContent> {
                                 getTextStyles:
                                     (context, value) => TextStyle(
                                       fontSize: screenWidth * 0.045,
-                                      color: primaryColor,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
                                 margin: 10,
@@ -840,7 +840,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_left, color: primaryColor),
+                        icon: Icon(Icons.arrow_left, color: Colors.black),
                         onPressed: () {
                           setState(() {
                             _selectedMonth = DateTime(
@@ -869,11 +869,11 @@ class _HomePageContentState extends State<HomePageContent> {
                         style: TextStyle(
                           fontSize: screenWidth * 0.055,
                           fontWeight: FontWeight.bold,
-                          color: primaryColor,
+                          color: Colors.black,
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.arrow_right, color: primaryColor),
+                        icon: Icon(Icons.arrow_right, color: Colors.black),
                         onPressed: () {
                           setState(() {
                             _selectedMonth = DateTime(
