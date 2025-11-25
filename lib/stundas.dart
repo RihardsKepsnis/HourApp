@@ -545,6 +545,10 @@ class _StundasPageState extends State<StundasPage> {
       SnackBar(
         content: Text(
           'Nokopēti ieraksti ${_clipboardEntriesMap.length} organizācijām/pilsētām!',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: primaryColor,
       ),
@@ -585,6 +589,10 @@ class _StundasPageState extends State<StundasPage> {
       SnackBar(
         content: Text(
           'Ielīmēti ieraksti ${_savedEntriesMap.length} organizācijām/pilsētām!',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: primaryColor,
       ),

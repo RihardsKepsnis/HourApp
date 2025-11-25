@@ -244,7 +244,6 @@ class _HomePageContentState extends State<HomePageContent> {
 
   List<BarChartGroupData> _weeklyBarGroups = [];
   bool _isChartLoading = true;
-  double _chartMaxY = 12;
 
   late DateTime _selectedMonth;
   late DateTime _selectedWeekStart;
@@ -256,18 +255,30 @@ class _HomePageContentState extends State<HomePageContent> {
     super.initState();
     DateTime now = DateTime.now();
     _selectedMonth = DateTime(now.year, now.month, 1, 12);
+
+    // Set current week start (Monday), keeping time consistent (midday).
     if (_selectedMonth.year == now.year && _selectedMonth.month == now.month) {
-      _selectedWeekStart = now.subtract(Duration(days: now.weekday - 1));
+      DateTime todayMidday = DateTime(now.year, now.month, now.day, 12);
+      _selectedWeekStart = todayMidday.subtract(
+        Duration(days: todayMidday.weekday - 1),
+      );
     } else {
       DateTime lastDay = DateTime(
         _selectedMonth.year,
         _selectedMonth.month + 1,
         1,
       ).subtract(const Duration(days: 1));
-      _selectedWeekStart = lastDay.subtract(
-        Duration(days: lastDay.weekday - 1),
+      DateTime lastDayMidday = DateTime(
+        lastDay.year,
+        lastDay.month,
+        lastDay.day,
+        12,
+      );
+      _selectedWeekStart = lastDayMidday.subtract(
+        Duration(days: lastDayMidday.weekday - 1),
       );
     }
+
     _loadUserData().then((_) {
       _fetchWeeklyWorkLogs();
       _subscribeMonthlySummary();
@@ -314,34 +325,58 @@ class _HomePageContentState extends State<HomePageContent> {
     }
   }
 
+  /// WEEKLY DATA
   Future<void> _fetchWeeklyWorkLogs() async {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
+
+      // Query full days: from Monday 00:00 to Sunday 23:59:59.999
       DateTime monday = _selectedWeekStart;
       DateTime sunday = monday.add(const Duration(days: 6));
+
+      DateTime mondayStart = DateTime(monday.year, monday.month, monday.day, 0);
+      DateTime sundayEnd = DateTime(
+        sunday.year,
+        sunday.month,
+        sunday.day,
+        23,
+        59,
+        59,
+        999,
+      );
+
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance
               .collection('users')
               .doc(uid)
               .collection('workLogs')
-              .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(monday))
-              .where('date', isLessThanOrEqualTo: Timestamp.fromDate(sunday))
+              .where(
+                'date',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(mondayStart),
+              )
+              .where('date', isLessThanOrEqualTo: Timestamp.fromDate(sundayEnd))
               .get();
+
       Map<int, double> weeklyHours = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0};
       Map<int, List<String>> statusPerDay = {};
+
       for (var doc in snapshot.docs) {
         final data = doc.data() as Map<String, dynamic>?;
         if (data == null) continue;
+
         DateTime logDate = (data['date'] as Timestamp).toDate();
         int weekday = logDate.weekday;
+
         if (data.containsKey('status') && data['status'] != null) {
           String status = data['status'].toString().toLowerCase().trim();
           if (status == 'slimība' || status == 'atvaļinājums') {
             statusPerDay.putIfAbsent(weekday, () => []).add(status);
           }
         }
+
         double sumHours = 0.0;
 
+        // New format: entries -> tasks
         if (data.containsKey('entries') && data['entries'] != null) {
           List<dynamic> entries = data['entries'];
           for (var entry in entries) {
@@ -360,7 +395,9 @@ class _HomePageContentState extends State<HomePageContent> {
               }
             }
           }
-        } else if (data.containsKey('tasks') && data['tasks'] != null) {
+        }
+        // Old format: direct tasks[]
+        else if (data.containsKey('tasks') && data['tasks'] != null) {
           List<dynamic> tasks = data['tasks'];
           for (var task in tasks) {
             double hours = 0.0;
@@ -372,48 +409,39 @@ class _HomePageContentState extends State<HomePageContent> {
             sumHours += hours;
           }
         }
+
         weeklyHours[weekday] = (weeklyHours[weekday] ?? 0) + sumHours;
       }
-      double computedMax = 0.0;
-      for (int i = 1; i <= 7; i++) {
-        double candidate = weeklyHours[i] ?? 0;
-        if (statusPerDay.containsKey(i) && candidate < 8) {
-          candidate = 8;
-        }
-        if (candidate > computedMax) {
-          computedMax = candidate;
-        }
-      }
-      double finalMax = computedMax < 1 ? 1 : computedMax * 1.1;
-      if (finalMax < 8) {
-        finalMax = 8;
-      }
-      if (finalMax > 23) finalMax = 23;
+
       List<BarChartGroupData> groups = [];
       Color getBarColor(double hours) {
-        if (hours >= 8)
+        if (hours >= 8) {
           return Colors.green;
-        else if (hours >= 4)
+        } else if (hours >= 4) {
           return Colors.orange;
-        else
+        } else {
           return Colors.red;
+        }
       }
 
       for (int i = 1; i <= 7; i++) {
         double hours = weeklyHours[i] ?? 0;
         if (statusPerDay.containsKey(i) && hours < 8) hours = 8;
+
         Color barColor;
         if (statusPerDay.containsKey(i)) {
           List<String> statuses = statusPerDay[i]!;
-          if (statuses.contains("slimība"))
+          if (statuses.contains("slimība")) {
             barColor = Colors.redAccent;
-          else if (statuses.contains("atvaļinājums"))
+          } else if (statuses.contains("atvaļinājums")) {
             barColor = Colors.blueAccent;
-          else
+          } else {
             barColor = getBarColor(hours);
+          }
         } else {
           barColor = getBarColor(hours);
         }
+
         groups.add(
           BarChartGroupData(
             x: i - 1,
@@ -428,8 +456,8 @@ class _HomePageContentState extends State<HomePageContent> {
           ),
         );
       }
+
       setState(() {
-        _chartMaxY = finalMax;
         _weeklyBarGroups = groups;
         _isChartLoading = false;
       });
@@ -491,12 +519,14 @@ class _HomePageContentState extends State<HomePageContent> {
             if (data == null) continue;
             DateTime logDate = (data['date'] as Timestamp).toDate();
             String key = DateFormat('yyyy-MM-dd').format(logDate);
+
             if (data.containsKey('status') && data['status'] != null) {
               String status = data['status'].toString().toLowerCase().trim();
               if (status == 'slimība' || status == 'atvaļinājums') {
                 statusPerDay.putIfAbsent(key, () => []).add(status);
               }
             }
+
             if (data['tasks'] != null) {
               List<dynamic> tasks = data['tasks'] as List<dynamic>;
               for (var task in tasks) {
@@ -520,26 +550,33 @@ class _HomePageContentState extends State<HomePageContent> {
               }
             }
           }
+
           List<DateTime> holidays = await fetchLatvianHolidays(
             _selectedMonth.year,
           );
           int daysInMonth = lastDayOfMonth.day;
           double expectedHours = 0.0;
+
           for (int d = 1; d <= daysInMonth; d++) {
             DateTime day = DateTime(
               _selectedMonth.year,
               _selectedMonth.month,
               d,
             );
+
             bool normallyWorking =
                 day.weekday >= DateTime.monday &&
                 day.weekday <= DateTime.friday;
+
+            // Special shifted working day example (10.05.2025)
             bool isShiftedWorking =
                 (_selectedMonth.year == 2025 &&
                     _selectedMonth.month == 5 &&
                     d == 10);
+
             bool isWorkingDay = normallyWorking || isShiftedWorking;
             double dayExpected = 0.0;
+
             if (isWorkingDay) {
               bool isPublicHoliday = holidays.any(
                 (holiday) =>
@@ -550,28 +587,37 @@ class _HomePageContentState extends State<HomePageContent> {
               bool workerOff = statusPerDay.containsKey(
                 DateFormat('yyyy-MM-dd').format(day),
               );
+
               if (isPublicHoliday || workerOff) {
                 dayExpected = 0.0;
               } else {
                 dayExpected = 8.0;
+
+                // Pre-holiday shortened day
                 DateTime nextDay = day.add(const Duration(days: 1));
+
                 bool nextNormallyWorking =
                     nextDay.weekday >= DateTime.monday &&
                     nextDay.weekday <= DateTime.friday;
+
                 bool nextShiftedWorking =
                     (nextDay.year == 2025 &&
                         nextDay.month == 5 &&
                         nextDay.day == 10);
+
                 bool nextWorking = nextNormallyWorking || nextShiftedWorking;
+
                 bool nextPublicHoliday = holidays.any(
                   (holiday) =>
                       holiday.year == nextDay.year &&
                       holiday.month == nextDay.month &&
                       holiday.day == nextDay.day,
                 );
+
                 bool nextWorkerOff = statusPerDay.containsKey(
                   DateFormat('yyyy-MM-dd').format(nextDay),
                 );
+
                 if (nextWorking && nextPublicHoliday && !nextWorkerOff) {
                   dayExpected = 7.0;
                 }
@@ -579,6 +625,7 @@ class _HomePageContentState extends State<HomePageContent> {
             }
             expectedHours += dayExpected;
           }
+
           double averageHours =
               daysInMonth > 0 ? totalWorked / daysInMonth : 0.0;
           int sickDaysCount = 0;
@@ -587,6 +634,7 @@ class _HomePageContentState extends State<HomePageContent> {
             if (statuses.contains('slimība')) sickDaysCount++;
             if (statuses.contains('atvaļinājums')) workerHolidayCount++;
           });
+
           setState(() {
             _monthlyTotalHours = totalWorked;
             _monthlyExpectedHours = expectedHours;
@@ -598,28 +646,43 @@ class _HomePageContentState extends State<HomePageContent> {
         });
   }
 
+  /// Latvian public holidays:
+  /// - Uses Nager API
+  /// - Filters to "public" holidays
+  /// - Does NOT move weekend holidays to Monday (Latvia does not auto-shift them)
+  /// - Skips 8 March if marked as public
   Future<List<DateTime>> fetchLatvianHolidays(int year) async {
     final url = 'https://date.nager.at/api/v3/PublicHolidays/$year/LV';
     final response = await http.get(Uri.parse(url));
+
     if (response.statusCode == 200) {
       final List<dynamic> holidaysJson = jsonDecode(response.body);
       List<DateTime> holidays = [];
+
       for (var holiday in holidaysJson) {
+        // Keep only real public holidays
         if (holiday["types"] != null && holiday["types"] is List) {
           List<dynamic> types = holiday["types"];
           List<String> lowerTypes =
               types.map((e) => e.toString().toLowerCase()).toList();
           if (!lowerTypes.contains("public")) continue;
         }
+
         DateTime holidayDate = DateTime.parse(holiday["date"]);
+
+        // Ignore 8 March if provider ever marks it as public.
         if (holidayDate.month == 3 && holidayDate.day == 8) continue;
-        if (holidayDate.weekday == DateTime.saturday) {
-          holidays.add(holidayDate.add(const Duration(days: 2)));
-        } else if (holidayDate.weekday == DateTime.sunday) {
-          holidays.add(holidayDate.add(const Duration(days: 1)));
-        }
-        holidays.add(holidayDate);
+
+        // IMPORTANT: do NOT move Saturday/Sunday holidays to Monday.
+        // Weekends are already non-working in the monthly calculation.
+        holidays.add(
+          DateTime(holidayDate.year, holidayDate.month, holidayDate.day),
+        );
       }
+
+      // Deduplicate and sort just in case
+      holidays = holidays.toSet().toList()..sort((a, b) => a.compareTo(b));
+
       return holidays;
     } else {
       throw Exception("Failed to fetch holidays");
@@ -702,7 +765,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_left, color: Colors.black),
+                        icon: const Icon(Icons.arrow_left, color: Colors.black),
                         onPressed:
                             _selectedWeekStart
                                         .subtract(const Duration(days: 7))
@@ -720,7 +783,10 @@ class _HomePageContentState extends State<HomePageContent> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.arrow_right, color: Colors.black),
+                        icon: const Icon(
+                          Icons.arrow_right,
+                          color: Colors.black,
+                        ),
                         onPressed:
                             _selectedWeekStart
                                         .add(const Duration(days: 7))
@@ -733,13 +799,14 @@ class _HomePageContentState extends State<HomePageContent> {
                   ),
                   SizedBox(height: screenWidth * 0.02),
                   _isChartLoading
-                      ? Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator())
                       : SizedBox(
                         height: screenWidth * 0.6,
                         child: BarChart(
                           BarChartData(
-                            minY: 1,
-                            maxY: _chartMaxY + 1,
+                            // Fixed, clean scale from 0 to 24 hours
+                            minY: 0,
+                            maxY: 24,
                             barTouchData: BarTouchData(
                               enabled: true,
                               touchTooltipData: BarTouchTooltipData(
@@ -765,7 +832,8 @@ class _HomePageContentState extends State<HomePageContent> {
                             titlesData: FlTitlesData(
                               leftTitles: SideTitles(
                                 showTitles: true,
-                                interval: _chartMaxY / 6,
+                                // 0, 4, 8, 12, 16, 20, 24
+                                interval: 4,
                                 getTextStyles:
                                     (context, value) => TextStyle(
                                       fontSize: screenWidth * 0.045,
@@ -840,7 +908,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_left, color: Colors.black),
+                        icon: const Icon(Icons.arrow_left, color: Colors.black),
                         onPressed: () {
                           setState(() {
                             _selectedMonth = DateTime(
@@ -854,7 +922,6 @@ class _HomePageContentState extends State<HomePageContent> {
                               _selectedMonth.month + 1,
                               1,
                             ).subtract(const Duration(days: 1));
-                            // Set chart week to last week of new month.
                             _selectedWeekStart = newLastDay.subtract(
                               Duration(days: newLastDay.weekday - 1),
                             );
@@ -873,7 +940,10 @@ class _HomePageContentState extends State<HomePageContent> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.arrow_right, color: Colors.black),
+                        icon: const Icon(
+                          Icons.arrow_right,
+                          color: Colors.black,
+                        ),
                         onPressed: () {
                           setState(() {
                             _selectedMonth = DateTime(
@@ -887,7 +957,6 @@ class _HomePageContentState extends State<HomePageContent> {
                               _selectedMonth.month + 1,
                               1,
                             ).subtract(const Duration(days: 1));
-                            // Set chart week to last week of new month.
                             _selectedWeekStart = newLastDay.subtract(
                               Duration(days: newLastDay.weekday - 1),
                             );
@@ -970,7 +1039,7 @@ class _NotificationsPopupState extends State<NotificationsPopup> {
         .collection('notifications');
     return AlertDialog(
       title: const Text("Paziņojumi"),
-      content: Container(
+      content: SizedBox(
         width: double.maxFinite,
         child: StreamBuilder<QuerySnapshot>(
           stream:
